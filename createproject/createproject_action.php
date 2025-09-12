@@ -23,6 +23,89 @@ if($action == "savecreateproject"){
     $depositfee = $_POST["depositfee"];
     $depositdate = $_POST["depositdate"];
     $labourrmk = $_POST["labourrmk"];
+    $new_image_filename = '';
+    $new_pdf_filename = '';
+
+    // PDF file ကို စစ်ဆေးပြီး upload လုပ်ခြင်း
+    if(isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] === UPLOAD_ERR_OK) {
+        $filename = $_FILES['pdf_file']['name'];
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $file = $_FILES['pdf_file']['tmp_name'];
+        $valid_pdf_extensions = array("pdf", "PDF");
+
+        if(in_array($extension, $valid_pdf_extensions)) {
+            $new_pdf_filename = date("YmdHis") . "_doc." . $extension; // ပုံနဲ့ နာမည်မတူအောင် ပြောင်းထား
+            $new_path = root . "upload/documents/" . $new_pdf_filename; // PDF အတွက် folder သီးသန့်ထား
+            move_uploaded_file($file, $new_path);
+        }
+    }
+
+    // Image file ကို စစ်ဆေးပြီး upload လုပ်ခြင်း
+    if(isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+        $filename = $_FILES['image_file']['name'];
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $file = $_FILES['image_file']['tmp_name'];
+        $valid_image_extensions = array("jpg","jpeg","png","JPG","PNG","JPEG");
+
+        if(in_array($extension, $valid_image_extensions)) {
+            $new_image_filename = date("YmdHis") . "." . $extension;
+            $new_path = root . "upload/images/" . $new_image_filename;
+            move_uploaded_file($file, $new_path);
+        }
+    }
+
+    $data = [
+        "ProjectID" => $projectid,
+        "ProjectName" => $projectname,
+        "LandInverstmentFee" => $landinverstmentfee,
+        "OperationFee" => $operationfee,
+        "PaperFee" => $paperfee,
+        "LayerFee" => $layerfee,
+        "VillageAdminFee" => $villageadminfee,
+        "TotalInverstmentFee" => $totalinverstmentfee,
+        "SqrtFeet" => $sqrtfeet,
+        "PaperStoreName" => $paperstorename,
+        "ContrustDate" => $constructdate,
+        "MainInversterName" => $maininvestorname,
+        "PaperStoreFile" => $new_pdf_filename,
+        "RecordPhoto" => $new_image_filename,
+        "Rmk" => $rmk,
+        "Date" => $dt,
+        "LabourName" => $labourname,
+        "DepositFee" => $depositfee,
+        "DepositDate" => $depositdate,
+        "LabourRmk" => $labourrmk
+    ];
+    $result = insertData_Fun("tblprojectcreate",$data);
+    if($result){
+        save_log($_SESSION["kyawhantharms_username"]." သည် Project Name [".$projectname."] အမည်ဖြင့်Projectတစ်ခုအသစ်ထည့်သွားသည်။");
+        echo 1;
+    }
+    else{
+        echo 0;
+    }
+}
+
+if($action == "editcreateproject"){
+    $aid = $_POST["eaid"];
+    $projectid = $_POST["projectid"];
+    $projectname = $_POST["projectname"];
+    $landinverstmentfee = $_POST["landinverstmentfee"];
+    $operationfee = $_POST["operationfee"];
+    $paperfee = $_POST["paperfee"];
+    $layerfee = $_POST["layerfee"];
+    $villageadminfee = $_POST["villageadminfee"];
+    $totalinverstmentfee = $_POST["totalinverstmentfee"];
+    $sqrtfeet = $_POST["sqrtfeet"];
+    $paperstorename = $_POST["paperstorename"];
+    $constructdate = $_POST["constructdate"];
+    $maininvestorname = $_POST["maininvestorname"];
+    $rmk = $_POST["rmk"];
+    $dt = $_POST["dt"];
+    $labourname = $_POST["labourname"];
+    $depositfee = $_POST["depositfee"];
+    $depositdate = $_POST["depositdate"];
+    $labourrmk = $_POST["labourrmk"];
 
     $data = [
         "ProjectID" => $projectid,
@@ -44,9 +127,14 @@ if($action == "savecreateproject"){
         "DepositDate" => $depositdate,
         "LabourRmk" => $labourrmk
     ];
-    $result = insertData_Fun("tblprojectcreate",$data);
+
+    $where = [
+        "AID" => $aid
+    ];
+
+    $result = updateData_Fun("tblprojectcreate",$data,$where);
     if($result){
-        save_log($_SESSION["kyawhantharms_username"]." သည် Project Name [".$projectname."] အမည်ဖြင့်Projectတစ်ခုအသစ်ထည့်သွားသည်။");
+        save_log($_SESSION["kyawhantharms_username"]." သည် Project Name [".$projectname."] အမည်ဖြင့်ProjectအားEditလုပ်သွားသည်။");
         echo 1;
     }
     else{
@@ -55,12 +143,8 @@ if($action == "savecreateproject"){
 }
 
 if($action == 'show_data'){
-    unset($_SESSION["go_record_patientbrcode"]);
-    unset($_SESSION["go_record_patientid"]);
-    unset($_SESSION["go_record_patientname"]);
-    unset($_SESSION["go_record_vno"]);
-    unset($_SESSION["go_record_totalamt"]);
-    unset($_SESSION["go_record_action"]);
+    unset($_SESSION["edit_createprojectaid"]);
+    unset($_SESSION["landoperation_createprojectaid"]);
     $limit_per_page=""; 
     if($_POST['entryvalue']==""){
         $limit_per_page=20; 
@@ -82,8 +166,14 @@ if($action == 'show_data'){
     $search = $_POST['search'];
     $a = "";
     if($search != ''){  
-        $a = " and (ProjectName like '%$search%' or MainInversterName like '%$search%') ";
-    }    
+        $a .= " and (ProjectName like '%$search%' or MainInversterName like '%$search%') ";
+    }  
+    
+    $from = $_POST['dtfrom'];
+    $to = $_POST['dtto'];
+    if($from != "" || $to != ""){
+        $a .= " and Date(Date)>='{$from}' and Date(Date)<='{$to}' ";
+    } 
     
     $sql = "select * from tblprojectcreate where AID is not null ".$a."
     order by AID desc limit {$offset},{$limit_per_page}";
@@ -102,9 +192,10 @@ if($action == 'show_data'){
                 <div class="card border-top-warning border-top-3" style="height: 270px;">
                     <div class="card-body">
                         <h6 class="card-title font-large-1 mb-2 text-center text-info">'.$row["ProjectName"].'</h6>
-                        <p class="card-text card font-medium-1 text-center mb-0">'.$row["MainInversterName"].'</p>
-                        <p class="font-small-3 mb-2 text-center">TotalInvestmentFee - '.$row["TotalInverstmentFee"].'</p>
-                        <p class="font-small-3 mb-2 text-center">ConstructDate - '.$row["ContrustDate"].'</p>
+                        <p class="card-text card font-medium-1 text-center mb-0 text-primary">MainInvestorName - '.$row["MainInversterName"].'</p>
+                        <p class="card-text card font-medium-1 text-center mb-0 text-success">Shares - '.$row["InversterName"].'</p>
+                        <p class="text-center text-warning">TotalInvestmentFee - '.$row["TotalInverstmentFee"].'</p>
+                        <p class="font-small-3 text-center text-dark">ConstructDate - '.$row["ContrustDate"].'</p>
                         
 
                     </div>
@@ -114,9 +205,13 @@ if($action == 'show_data'){
                             data-projectcreateid="'.$row["AID"].'">
                             Add Inverstors</a>
                         <a href="#" class="btn btn-outline-warning btn-sm"
-                            id="btnedit" 
+                            id="btneditcreateproject" 
                             data-projectcreateid="'.$row["AID"].'"  >
                             Edit</a>
+                        <a href="#" class="btn btn-outline-info btn-sm d-block mt-50"
+                            id="btnlandoperation" 
+                            data-projectcreateid="'.$row["AID"].'"  >
+                            Land Operations</a>
                     </div>
                 </div>
             </div>
@@ -252,22 +347,36 @@ if($action == "addinvestor"){
     $shareholdername = GetString("SELECT ShareHolderName FROM tblshareholder WHERE AID='{$shareholderid}'");
     $chk = GetInt("SELECT InversterAmount FROM tblprojectcreate WHERE AID='{$projectcreateid}'");
     $investoramt = $chk + 1;
-    $sql_one = "UPDATE tblprojectcreate SET InversterAmount = '{$investoramt}', 
-    InversterName = CONCAT(IFNULL(InversterName, ''), CASE WHEN InversterName 
-    IS NOT NULL THEN ',' ELSE '' END, '{$shareholdername}')
-    WHERE AID = '{$projectcreateid}'";
 
-    $sql = "UPDATE tblprojectcreate
-    SET InversterAmount = '{$investoramt}', 
-    InversterName = CONCAT(
-    CASE WHEN InversterName IS NOT NULL THEN CONCAT(InversterName, ',') ELSE '' END,
-    '{$shareholdername}')
+    $sql = "UPDATE tblprojectcreate SET InversterAmount = '{$investoramt}', 
+    InversterName = CONCAT(CASE WHEN InversterName IS NOT NULL 
+    THEN CONCAT(InversterName, ',') ELSE '' END, '{$shareholdername}') 
     WHERE AID = '{$projectcreateid}'";
     $result = mysqli_query($con,$sql);
     if($result){
         echo 1;
     }
     else{
+        echo 0;
+    }
+}
+
+if ($action == "preeditcreateproject") {
+    if (isset($_POST["editprojectid"])) {
+        $projectcreateid = $_POST["editprojectid"];
+        $_SESSION["edit_createprojectaid"] = $projectcreateid;
+        echo 1;
+    } else {
+        echo 0;
+    }
+}
+
+if ($action == "prelandoperation") {
+    if (isset($_POST["landprojectid"])) {
+        $projectcreateid = $_POST["landprojectid"];
+        $_SESSION["landoperation_createprojectaid"] = $projectcreateid;
+        echo 1;
+    } else {
         echo 0;
     }
 }

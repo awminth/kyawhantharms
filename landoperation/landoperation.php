@@ -96,44 +96,44 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="projectinput2">Project Name</label>
-                                    <input type="text" class="form-control" placeholder="Project Name"
-                                        name="projectname" value="<?= $projectname?>">
+                                    <label for="projectinput2">LandManage Amount</label>
+                                    <input type="number" class="form-control" placeholder="LandManage Amount"
+                                        name="landmanageamt" value="<?= $projectname?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="projectinput3">LandInverstmentFee</label>
-                                    <input type="number" class="form-control" placeholder="LandInverstmentFee"
-                                        name="landinverstmentfee" value="<?= $landinverstmentfee?>">
+                                    <label for="projectinput3">Land Number</label>
+                                    <input type="number" class="form-control" placeholder="Land Number"
+                                        name="landnumber" value="<?= $landinverstmentfee?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="projectinput4">OperationFee</label>
-                                    <input type="number" class="form-control" placeholder="OperationFee"
-                                        name="operationfee" value="<?= $operationfee?>">
+                                    <label for="projectinput4">Sell Price</label>
+                                    <input type="number" class="form-control" placeholder="Sell Price"
+                                        name="sellprice" value="<?= $operationfee?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="projectinput4">PaperFee</label>
-                                    <input type="number" class="form-control" placeholder="PaperFee" name="paperfee"
-                                        value="<?= $paperfee?>">
+                                    <label for="projectinput4">Confirm Price</label>
+                                    <input type="number" class="form-control" placeholder="Confirm Price" 
+                                    name="confirmprice" value="<?= $paperfee?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="projectinput4">LayerFee</label>
+                                    <label for="projectinput4">Payment Plan</label>
                                     <input type="number" class="form-control" placeholder="LayerFee" name="layerfee"
                                         value="<?= $layerfee?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="projectinput4">VillageAdminFee</label>
-                                    <input type="number" class="form-control" placeholder="VillageAdminFee"
-                                        name="villageadminfee" value="<?= $villageadminfee?>">
+                                    <label for="projectinput4">Buyer Name</label>
+                                    <input type="text" class="form-control" placeholder="Buyer Name"
+                                        name="buyername" value="<?= $villageadminfee?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
