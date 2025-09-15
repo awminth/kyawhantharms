@@ -23,6 +23,9 @@
     $p4a1=$row["p4a1"];
     $p4a2=$row["p4a2"];
     $p4a3=$row["p4a3"];
+
+    $p5=$row["p5"];
+    $p5a1=$row["p5a1"];
 ?>
 <!DOCTYPE html>
 <html class="loading" lang="en" data-textdirection="ltr">
@@ -367,17 +370,22 @@
                     <a class="nav-link" href="<?=roothtml.'createproject/createproject.php'?>">
                         <i class="la la-indent"></i><span data-i18n="Dashboard">Create Project</span></a>
                 </li>
-                <?php if($p3 == 1){ ?>
+                <li <?=($p3==1)?'' : 'style="display:none"' ?>  
+                    class="dropdown nav-item <?=(curlink == 'landoperation.php')?'active':''?>">
+                    <a class="nav-link" href="<?=roothtml.'landoperation/landoperation.php'?>">
+                        <i class="la la-indent"></i><span data-i18n="Dashboard">Land Operation</span></a>
+                </li>
+                <?php if($p4 == 1){ ?>
                 <li class="dropdown nav-item <?=(curlink == 'usercontrol.php')?'active':''?>" data-menu="dropdown">
                     <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown"><i class="la la-gear"></i><span
                             data-i18n="Layouts">Set Up</span></a>
                     <ul class="dropdown-menu">
-                        <li <?=($p3a1==1)?'' : 'style="display:none"' ?>
+                        <li <?=($p4a1==1)?'' : 'style="display:none"' ?>
                             class="<?=(curlink == 'shareholder.php')?'active':''?>">
                             <a class="dropdown-item" href="<?=roothtml.'setup/shareholder.php'?>">
                                 <i class="la la-users"></i><span data-i18n="ToDo">Share Holder</span></a>
                         </li>
-                        <li <?=($p3a2==1)?'' : 'style="display:none"' ?>
+                        <li <?=($p4a2==1)?'' : 'style="display:none"' ?>
                             class="<?=(curlink == 'usercontrol.php')?'active':''?>">
                             <a class="dropdown-item" href="<?=roothtml.'setup/usercontrol.php'?>">
                                 <i class="la la-users"></i><span data-i18n="ToDo">User Account</span></a>
@@ -385,11 +393,13 @@
                     </ul>
                 </li>
                 <?php } ?>
-                <!-- <li <?=($A15==1)?'' : 'style="display:none"' ?>
+                <?php if($p5 == 1){ ?>
+                <li <?=($p5a1==1)?'' : 'style="display:none"' ?>
                     class="dropdown nav-item <?=(curlink == 'log.php')?'active':''?>">
                     <a class="nav-link" href="<?=roothtml.'log/log.php'?>">
                         <i class="la la-th-list"></i><span data-i18n="Dashboard">Log History</span></a>
-                </li> -->
+                </li>
+                <?php } ?>
             </ul>
         </div>
     </div>

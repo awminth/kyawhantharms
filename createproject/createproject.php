@@ -2,108 +2,6 @@
     include('../config.php'); 
     include(root.'master/header.php');
 ?>
-<!-- BEGIN: Content-->
-<!-- <div class="app-content container center-layout mt-2">
-    <div class="content-overlay"></div>
-    <div class="content-wrapper">
-        <div class="content-header-left col-md-6 col-12 mb-2">
-            <div class="row breadcrumbs-top d-block">
-                <div class="breadcrumb-wrapper col-12">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?=roothtml.'home/home.php'?>">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active">Created Projects
-                        </li>
-                    </ol>
-                </div>
-            </div>
-            <h3 class="content-header-title mb-0">Created Projects</h3>
-        </div>
-        <div class="content-body">
-            <div class="row mb-5">
-                <div class="col-sm-2">
-                    <div class="card">
-                        <div class="card-content collapse show">
-                            <div class="form-group col-md-12 pt-1">
-                                <label for=" date12" class="filled">From</label>
-                                <div class="position-relative has-icon-left">
-                                    <input type="date" value="<?=date('Y-m-d')?>" id="timesheetinput3"
-                                        class="form-control" name="from">
-                                    <div class="form-control-position">
-                                        <i class="ft-message-square"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-12 ">
-                                <label for=" date12" class="filled">To</label>
-                                <div class="position-relative has-icon-left">
-                                    <input type="date" value="<?=date('Y-m-d')?>" id="timesheetinput3"
-                                        class="form-control" name="to">
-                                    <div class="form-control-position">
-                                        <i class="ft-message-square"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-12">
-                                <a href="#" id='btnsearch' class="btn btn-social btn-block mr-1 mb-1 btn-yahoo"><span
-                                        class="la la-search font-medium-3"></span> Search</a>
-                            </div>
-                            <div class="form-group col-md-12 pt-1">
-                                <form method="POST" action="orderitems_action.php">
-                                    <input type="hidden" name="hid">
-                                    <input type="hidden" name="ser">
-                                    <input type="hidden" name="dtfrom">
-                                    <input type="hidden" name="dtto">
-                                    <button type="submit" name="action" value="excel"
-                                        class="btn btn-social btn-block btn-dropbox"><span
-                                            class="la la-file-excel-o font-medium-3"></span> Excel</button>
-                                    <button type="submit" name="action" value="pdf"
-                                        class="btn btn-social btn-block btn-dropbox"><span
-                                            class="la la-file-pdf-o font-medium-3"></span> PDF</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-10">
-                    <div class="card">
-                        <div class="card-content collapse show">
-                            <div class="card-body">
-                                <input type="hidden" name="hid">
-                                <input type="hidden" name="ser">
-                                <div class="todo-fixed-search d-flex justify-content-between align-items-center pb-2">
-                                    <fieldset class="form-group position-relative has-icon-left m-0 flex-grow-1 pl-2">
-                                        <input type="text" class="form-control todo-search" id="searching"
-                                            placeholder="Search Task">
-                                        <div class="form-control-position">
-                                            <i class="ft-search"></i>
-                                        </div>
-                                    </fieldset>
-                                    <div class="todo-sort dropdown mr-1">
-                                        <button class="btn dropdown-toggle sorting" type="button" id="sortDropdown"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="ft-filter"></i>
-                                            <span>Entry</span>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="sortDropdown">
-                                            <a class="dropdown-item ascending" href="#" id="entry" data-txt="20">20</a>
-                                            <a class="dropdown-item descending" href="#" id="entry" data-txt="50">50</a>
-                                            <a class="dropdown-item descending" href="#" id="entry"
-                                                data-txt="100">100</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="show_data">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
 
 <!-- BEGIN: Content-->
 <div class="app-content content">
@@ -306,28 +204,6 @@ $(document).ready(function() {
         load_page();
     });
 
-    $(document).on("change", "#shareholder", function() {
-        var shareholderid = $("[name='shareholder']").val();
-        $.ajax({
-            type: "post",
-            url: ajax_url,
-            data: {
-                action: 'select_shareholder',
-                shareholderid: shareholderid
-            },
-            success: function(data) {
-                $("[name='sharepercent']").val(data);
-            }
-        });
-    });
-
-    $(document).on("click", "#btnaddinvestors", function(e) {
-        e.preventDefault();
-        var projectcreateid = $(this).data("projectcreateid");
-        $("[name='projectcreateid']").val(projectcreateid);
-        $("#btnnewmodal").modal("show");
-    });
-
     $(document).on("click", "#btneditcreateproject", function(e) {
         e.preventDefault();
         var projectcreateid = $(this).data("projectcreateid");
@@ -346,20 +222,60 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on("click", "#btnlandoperation", function(e) {
+    $(document).on("click", "#btndelete", function() {
+        var aid = $(this).data("aid");
+        swal({
+                title: "Delete?",
+                text: "Are you sure Delete!",
+                type: "error",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes, cancel it!",
+                closeOnConfirm: false
+            },
+            function() {
+                $.ajax({
+                    type: "post",
+                    url: ajax_url,
+                    data: {
+                        action: 'delete',
+                        aid: aid
+                    },
+                    success: function(data) {
+                        if (data == 1) {
+                            swal("Successful",
+                                "Delete data success.",
+                                "success");
+                            load_page();
+                            swal.close();
+                        } else {
+                            swal("Error",
+                                "Delete data failed.",
+                                "error");
+                        }
+                    }
+                });
+            });
+    });
+
+    $(document).on("click", "#btnaddinvestors", function(e) {
         e.preventDefault();
         var projectcreateid = $(this).data("projectcreateid");
+        $("[name='projectcreateid']").val(projectcreateid);
+        $("#btnnewmodal").modal("show");
+    });
+
+    $(document).on("change", "#shareholder", function() {
+        var shareholderid = $("[name='shareholder']").val();
         $.ajax({
             type: "post",
             url: ajax_url,
             data: {
-                action : "prelandoperation",
-                landprojectid: projectcreateid
+                action: 'select_shareholder',
+                shareholderid: shareholderid
             },
             success: function(data) {
-                if(data == 1){
-                    location.href = "<?= roothtml.'landoperation/landoperation.php'?>";
-                }
+                $("[name='sharepercent']").val(data);
             }
         });
     });
@@ -381,6 +297,24 @@ $(document).ready(function() {
                     swal.close();
                 } else {
                     swal("Error", "Save data is error.", "error");
+                }
+            }
+        });
+    });
+
+    $(document).on("click", "#btnlandoperation", function(e) {
+        e.preventDefault();
+        var projectcreateid = $(this).data("projectcreateid");
+        $.ajax({
+            type: "post",
+            url: ajax_url,
+            data: {
+                action : "prelandoperation",
+                landprojectid: projectcreateid
+            },
+            success: function(data) {
+                if(data == 1){
+                    location.href = "<?= roothtml.'landoperation/prelandoperation.php'?>";
                 }
             }
         });

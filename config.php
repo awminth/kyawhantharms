@@ -28,6 +28,7 @@ $color = "primary";
 $pay=array('KPay','Wave Money','KBZ Banking','AYA','CB');
 $arr_gender = array('Male','Female');
 $arr_usertype = array("Admin","User");
+$arr_payment = array("Cash","Installment");
 
 function load_shareholder(){
     global $con;

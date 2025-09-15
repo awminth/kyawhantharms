@@ -145,6 +145,7 @@ if($action == "editcreateproject"){
 if($action == 'show_data'){
     unset($_SESSION["edit_createprojectaid"]);
     unset($_SESSION["landoperation_createprojectaid"]);
+    unset($_SESSION["preedit_landoperationaid"]);
     $limit_per_page=""; 
     if($_POST['entryvalue']==""){
         $limit_per_page=20; 
@@ -199,19 +200,33 @@ if($action == 'show_data'){
                         
 
                     </div>
-                    <div class="card-footer mx-auto">
-                        <a href="#" class="btn btn-outline-danger btn-sm" 
-                            id="btnaddinvestors" 
-                            data-projectcreateid="'.$row["AID"].'">
-                            Add Inverstors</a>
-                        <a href="#" class="btn btn-outline-warning btn-sm"
-                            id="btneditcreateproject" 
-                            data-projectcreateid="'.$row["AID"].'"  >
-                            Edit</a>
-                        <a href="#" class="btn btn-outline-info btn-sm d-block mt-50"
-                            id="btnlandoperation" 
-                            data-projectcreateid="'.$row["AID"].'"  >
-                            Land Operations</a>
+                    <div class="card-footer text-center">
+                        <div class="row">
+                            <div class="col-12 mb-1">
+                                <a href="#" class="btn btn-outline-warning btn-sm me-1"
+                                    id="btneditcreateproject" 
+                                    data-projectcreateid="'.$row["AID"].'"  >
+                                    Edit</a>
+                                <a href="#" class="btn btn-outline-warning btn-sm me-1"
+                                    id="btndelete" 
+                                    data-aid="'.$row["AID"].'"  >
+                                    Delete</a>
+                            </div>
+                            <div class="col-12">
+                                <a href="#" class="btn btn-outline-danger btn-sm me-1" 
+                                    id="btnaddinvestors" 
+                                    data-projectcreateid="'.$row["AID"].'">
+                                    Add Inverstors</a>';
+                            if($row["SoldStatus"] == "no") {
+                            $out .= '
+                                <a href="#" class="btn btn-outline-info btn-sm"
+                                    id="btnlandoperation" 
+                                    data-projectcreateid="'.$row["AID"].'"  >
+                                    Land Operations</a>';
+                            }
+                        $out .= ' 
+                            </div>      
+                        </div>
                     </div>
                 </div>
             </div>
@@ -343,8 +358,10 @@ if($action == "select_shareholder"){
 
 if($action == "addinvestor"){
     $projectcreateid = $_POST["projectcreateid"];
+    $projectid = GetInt("SELECT ProjectID FROM tblprojectcreate WHERE AID='{$projectcreateid}'");
     $shareholderid = $_POST["shareholder"];
     $shareholdername = GetString("SELECT ShareHolderName FROM tblshareholder WHERE AID='{$shareholderid}'");
+    $sharepercent = $_POST["sharepercent"];
     $chk = GetInt("SELECT InversterAmount FROM tblprojectcreate WHERE AID='{$projectcreateid}'");
     $investoramt = $chk + 1;
 
@@ -352,9 +369,21 @@ if($action == "addinvestor"){
     InversterName = CONCAT(CASE WHEN InversterName IS NOT NULL 
     THEN CONCAT(InversterName, ',') ELSE '' END, '{$shareholdername}') 
     WHERE AID = '{$projectcreateid}'";
-    $result = mysqli_query($con,$sql);
-    if($result){
-        echo 1;
+    $result_one = mysqli_query($con,$sql);
+    if($result_one){
+        $data = [
+            "ProjectCreateID" => $projectcreateid,
+            "ShareHolderID" => $shareholderid,
+            "ShareHolderName" => $shareholdername,
+            "SharePercent" => $sharepercent
+        ];
+        $result_two = insertData_Fun("tblprojectinverstment",$data);
+        if($result_two){
+            echo 1;
+        }
+        else{
+            echo 2;
+        }
     }
     else{
         echo 0;
@@ -367,6 +396,29 @@ if ($action == "preeditcreateproject") {
         $_SESSION["edit_createprojectaid"] = $projectcreateid;
         echo 1;
     } else {
+        echo 0;
+    }
+}
+
+if($action == "delete"){
+    $aid = $_POST["aid"];
+    $sql_chk = "select AID from tbllandoperation where ProjectCreateID = '{$aid}'";
+    $res_chk = mysqli_query($con,$sql_chk);
+    if(mysqli_num_rows($res_chk) > 0){
+        $where_one  = [
+            "ProjectCreateID" => $aid
+        ];
+        $result_one = deleteData_Fun("tbllandoperation",$where_one);
+    }
+    $where_two = [
+        "AID" => $aid
+    ];
+    $result_two = deleteData_Fun("tblprojectcreate",$where_two);
+    if($result_two){
+        save_log($_SESSION["kyawhantharms_username"]." သည် Projectအား deleteလုပ်သွားသည်။");
+        echo 1;
+    }
+    else{
         echo 0;
     }
 }
